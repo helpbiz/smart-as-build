@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+backend/bin/
+dist/
+build/
+
+# Environment files
+.env
+*.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Keys and credentials
+*.key
+*.pem
+fcm-credentials.json
+
+# IDE
+.vscode/
+.idea/
+
+# Temp files
+*.tmp
+*.swp

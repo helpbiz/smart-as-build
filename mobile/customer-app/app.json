@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Smart A/S Customer",
+    "slug": "smart-as-customer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#007AFF"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartas.customer"
+    },
+    "android": {
+      "package": "com.smartas.customer",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Smart A/S to use your location for finding nearby technicians."
+        }
+      ]
+    ]
+  }
+}

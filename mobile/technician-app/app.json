@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Smart A/S Technician",
+    "slug": "smart-as-technician",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "extra": {
+      "apiUrl": "http://192.168.1.127:8088/api/v1"
+    },
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#34C759"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smartas.technician"
+    },
+    "android": {
+      "package": "com.smartas.technician",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
