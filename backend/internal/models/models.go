@@ -39,7 +39,7 @@ type Technician struct {
 // RepairRequest represents an A/S service request
 type RepairRequest struct {
 	ID                   uint           `gorm:"primaryKey" json:"id"`
-	UserID               uint           `gorm:"not null;index" json:"user_id"`
+	UserID               *uint          `gorm:"index" json:"user_id,omitempty"`
 	TechnicianID         *uint          `gorm:"index" json:"technician_id,omitempty"`
 	ProductName          string         `gorm:"not null" json:"product_name"`
 	PurchaseDate         time.Time      `json:"purchase_date"`
@@ -138,6 +138,22 @@ type TechnicianRegisterRequest struct {
 
 type UpdateFCMTokenRequest struct {
 	FCMToken string `json:"fcm_token" binding:"required"`
+}
+
+type AdminCreateRepairRequestDTO struct {
+	ProductName        string `json:"product_name" binding:"required"`
+	CustomerName       string `json:"customer_name" binding:"required"`
+	Phone              string `json:"phone" binding:"required"`
+	Address            string `json:"address" binding:"required"`
+	SymptomDescription string `json:"symptom_description"`
+}
+
+type AdminAssignRequestDTO struct {
+	TechnicianID uint `json:"technician_id" binding:"required"`
+}
+
+type AdminUpdateStatusDTO struct {
+	Status string `json:"status" binding:"required"`
 }
 
 type DashboardStats struct {

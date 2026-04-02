@@ -44,10 +44,19 @@ export const technicianApi = {
   list: () => api.get('/admin/technicians'),
   approve: (id: number) => api.put(`/admin/technicians/${id}/approve`),
   reject: (id: number) => api.put(`/admin/technicians/${id}/reject`),
+  create: (data: { name: string; phone: string; email?: string; password: string; service_area?: string }) =>
+    api.post('/admin/technicians', data),
+  delete: (id: number) => api.delete(`/admin/technicians/${id}`),
 };
 
 export const requestApi = {
   list: () => api.get('/admin/repair-requests'),
+  create: (data: { product_name: string; customer_name: string; phone: string; address: string; symptom_description?: string }) =>
+    api.post('/admin/repair-requests', data),
+  assign: (id: number, technician_id: number) =>
+    api.put(`/admin/repair-requests/${id}/assign`, { technician_id }),
+  updateStatus: (id: number, status: string) =>
+    api.put(`/admin/repair-requests/${id}/status`, { status }),
 };
 
 export const statisticsApi = {

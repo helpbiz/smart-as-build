@@ -162,7 +162,7 @@ func (s *Service) CreateRepairRequest(userID uint, req *models.CreateRepairReque
 	}
 
 	rr := &models.RepairRequest{
-		UserID:             userID,
+		UserID:             &userID,
 		ProductName:        req.ProductName,
 		PurchaseDate:       req.PurchaseDate,
 		CustomerName:       req.CustomerName,
@@ -231,7 +231,9 @@ func (s *Service) AcceptRepairRequest(techID, requestID uint) error {
 	now := time.Now()
 	req.AcceptedAt = &now
 
-	go s.notifyCustomerRequestAccepted(req, techID)
+	if req.UserID != nil {
+		go s.notifyCustomerRequestAccepted(req, techID)
+	}
 
 	return nil
 }
@@ -293,7 +295,9 @@ func (s *Service) CompleteRepair(techID, requestID uint, req *models.CompleteRep
 		return err
 	}
 
-	go s.notifyCustomerRequestCompleted(repReq.UserID, repReq.ProductName)
+	if repReq.UserID != nil {
+		go s.notifyCustomerRequestCompleted(*repReq.UserID, repReq.ProductName)
+	}
 
 	return nil
 }
@@ -368,6 +372,60 @@ func (s *Service) GetStatistics() (*models.Statistics, error) {
 
 func (s *Service) GetRepairRequestsForExport() ([]models.RepairRequest, error) {
 	return s.repo.GetRepairRequestsForExport()
+}
+
+func (s *Service) AdminCreateRepairRequest(req *models.AdminCreateRepairRequestDTO) (*models.RepairRequest, error) {
+	rr := &models.RepairRequest{
+		ProductName:        req.ProductName,
+		CustomerName:       req.CustomerName,
+		Phone:              req.Phone,
+		Address:            req.Address,
+		SymptomDescription: req.SymptomDescription,
+		Status:             "pending",
+	}
+	if err := s.repo.CreateRepairRequest(rr); err != nil {
+		return nil, err
+	}
+	return rr, nil
+}
+
+func (s *Service) AdminCreateTechnician(req *models.TechnicianRegisterRequest) (*models.Technician, error) {
+	existing, _ := s.repo.GetTechnicianByPhone(req.Phone)
+	if existing != nil {
+		return nil, errors.New("phone already registered")
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	tech := &models.Technician{
+		Phone:        req.Phone,
+		Name:         req.Name,
+		Email:        req.Email,
+		PasswordHash: string(hashedPassword),
+		Status:       "approved",
+		ServiceArea:  req.ServiceArea,
+	}
+	if err := s.repo.CreateTechnician(tech); err != nil {
+		return nil, err
+	}
+	return tech, nil
+}
+
+func (s *Service) AdminAssignTechnician(requestID, techID uint) error {
+	return s.repo.AdminAssignTechnician(requestID, techID)
+}
+
+func (s *Service) AdminUpdateRequestStatus(requestID uint, status string) error {
+	allowed := map[string]bool{"pending": true, "assigned": true, "repairing": true, "completed": true}
+	if !allowed[status] {
+		return errors.New("invalid status")
+	}
+	return s.repo.UpdateRepairRequestStatus(requestID, status)
+}
+
+func (s *Service) AdminDeleteTechnician(id uint) error {
+	return s.repo.DeleteTechnician(id)
 }
 
 // JWT token generation
@@ -460,7 +518,11 @@ func (s *Service) notifyCustomerRequestAccepted(req *models.RepairRequest, techI
 		return
 	}
 
-	user, err := s.repo.GetUserByID(req.UserID)
+	if req.UserID == nil {
+		return
+	}
+
+	user, err := s.repo.GetUserByID(*req.UserID)
 	if err != nil || user.FCMToken == "" {
 		return
 	}

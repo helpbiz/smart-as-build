@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"smart-as/internal/models"
 	"smart-as/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -227,6 +228,71 @@ func formatAmount(n int) string {
 		return fmt.Sprintf("%d", n)
 	}
 	return formatAmount(n/1000) + "," + fmt.Sprintf("%03d", n%1000)
+}
+
+func (h *AdminHandler) AdminCreateRepairRequest(c *gin.Context) {
+	var req models.AdminCreateRepairRequestDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	rr, err := h.svc.AdminCreateRepairRequest(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, rr)
+}
+
+func (h *AdminHandler) AdminCreateTechnician(c *gin.Context) {
+	var req models.TechnicianRegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	tech, err := h.svc.AdminCreateTechnician(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, tech)
+}
+
+func (h *AdminHandler) AdminAssignTechnician(c *gin.Context) {
+	id := parseUint(c.Param("id"))
+	var req models.AdminAssignRequestDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.svc.AdminAssignTechnician(id, req.TechnicianID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "assigned"})
+}
+
+func (h *AdminHandler) AdminUpdateRequestStatus(c *gin.Context) {
+	id := parseUint(c.Param("id"))
+	var req models.AdminUpdateStatusDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.svc.AdminUpdateRequestStatus(id, req.Status); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "updated"})
+}
+
+func (h *AdminHandler) AdminDeleteTechnician(c *gin.Context) {
+	id := parseUint(c.Param("id"))
+	if err := h.svc.AdminDeleteTechnician(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 }
 
 func getPaymentMethodText(method string) string {

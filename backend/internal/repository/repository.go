@@ -86,6 +86,18 @@ func (r *Repository) UpdateTechnicianFCMToken(techID uint, token string) error {
 	return r.db.Model(&models.Technician{}).Where("id = ?", techID).Update("fcm_token", token).Error
 }
 
+func (r *Repository) DeleteTechnician(id uint) error {
+	return r.db.Delete(&models.Technician{}, id).Error
+}
+
+func (r *Repository) AdminAssignTechnician(requestID, techID uint) error {
+	return r.db.Model(&models.RepairRequest{}).Where("id = ?", requestID).
+		Updates(map[string]interface{}{
+			"technician_id": techID,
+			"status":        "assigned",
+		}).Error
+}
+
 // RepairRequest operations
 
 func (r *Repository) CreateRepairRequest(req *models.RepairRequest) error {
