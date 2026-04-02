@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Smart A/S Customer",
+    "name": "고짱 고객용",
     "slug": "smart-as-customer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,8 @@
     "extra": {
       "eas": {
         "projectId": "smart-as-customer"
-      }
+      },
+      "apiUrl": "http://foryouelec.co.kr:8080/api/v1"
     },
     "splash": {
       "resizeMode": "contain",

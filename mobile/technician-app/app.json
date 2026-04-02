@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Smart A/S Technician",
+    "name": "고짱 기사용",
     "slug": "smart-as-technician",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
       "eas": {
         "projectId": "smart-as-technician"
       },
-      "apiUrl": "http://192.168.1.127:8088/api/v1"
+      "apiUrl": "http://foryouelec.co.kr:8080/api/v1"
     },
     "splash": {
       "resizeMode": "contain",
