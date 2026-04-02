@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: smartas-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./data/certs:/etc/nginx/certs:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    image: smart-as-backend:latest
+    container_name: smartas-backend
+    environment:
+      - DB_HOST=192.168.1.2
+      - DB_PORT=5432
+      - DB_USER=smartas
+      - DB_PASSWORD=smartas1234
+      - DB_NAME=smart_as
+      - JWT_SECRET=smartas-jwt-secret-key-32chars-minimum
+      - SERVER_PORT=8088
+    restart: unless-stopped
+
+  frontend:
+    image: smart-as_app:latest
+    container_name: smartas-frontend
+    restart: unless-stopped
