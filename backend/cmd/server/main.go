@@ -47,6 +47,9 @@ func main() {
 		log.Printf("Warning: Migration error (may be already migrated): %v", err)
 	}
 
+	// purchase_date가 NOT NULL로 생성된 경우 nullable로 변경 (관리자 접수 등록 대응)
+	db.Exec("ALTER TABLE repair_requests ALTER COLUMN purchase_date DROP NOT NULL")
+
 	fcmClient, err := fcm.NewClient(&cfg.FCM)
 	if err != nil {
 		log.Printf("Warning: FCM initialization failed: %v", err)
