@@ -42,7 +42,7 @@ type RepairRequest struct {
 	UserID               *uint          `gorm:"index" json:"user_id,omitempty"`
 	TechnicianID         *uint          `gorm:"index" json:"technician_id,omitempty"`
 	ProductName          string         `gorm:"not null" json:"product_name"`
-	PurchaseDate         time.Time      `json:"purchase_date"`
+	PurchaseDate         *time.Time     `json:"purchase_date,omitempty"`
 	CustomerName         string         `gorm:"not null" json:"customer_name"`
 	Phone                string         `gorm:"not null" json:"phone"`
 	Address              string         `gorm:"not null" json:"address"`

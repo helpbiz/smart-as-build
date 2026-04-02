@@ -164,7 +164,7 @@ func (s *Service) CreateRepairRequest(userID uint, req *models.CreateRepairReque
 	rr := &models.RepairRequest{
 		UserID:             &userID,
 		ProductName:        req.ProductName,
-		PurchaseDate:       req.PurchaseDate,
+		PurchaseDate:       &req.PurchaseDate,
 		CustomerName:       req.CustomerName,
 		Phone:              req.Phone,
 		Address:            req.Address,
