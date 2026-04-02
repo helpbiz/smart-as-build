@@ -98,6 +98,7 @@ func main() {
 			admin.PUT("/technicians/:id/approve", middleware.AuthMiddleware(svc), adminHandler.ApproveTechnician)
 			admin.PUT("/technicians/:id/reject", middleware.AuthMiddleware(svc), adminHandler.RejectTechnician)
 			admin.GET("/repair-requests", middleware.AuthMiddleware(svc), adminHandler.ListRepairRequests)
+			admin.POST("/upload-photo", middleware.AuthMiddleware(svc), adminHandler.UploadPhoto)
 			admin.POST("/repair-requests", middleware.AuthMiddleware(svc), adminHandler.AdminCreateRepairRequest)
 			admin.PUT("/repair-requests/:id/assign", middleware.AuthMiddleware(svc), adminHandler.AdminAssignTechnician)
 			admin.PUT("/repair-requests/:id/status", middleware.AuthMiddleware(svc), adminHandler.AdminUpdateRequestStatus)

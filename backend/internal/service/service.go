@@ -375,13 +375,19 @@ func (s *Service) GetRepairRequestsForExport() ([]models.RepairRequest, error) {
 }
 
 func (s *Service) AdminCreateRepairRequest(req *models.AdminCreateRepairRequestDTO) (*models.RepairRequest, error) {
+	photosJSON := "[]"
+	if len(req.SymptomPhotos) > 0 {
+		if data, err := json.Marshal(req.SymptomPhotos); err == nil {
+			photosJSON = string(data)
+		}
+	}
 	rr := &models.RepairRequest{
 		ProductName:        req.ProductName,
 		CustomerName:       req.CustomerName,
 		Phone:              req.Phone,
 		Address:            req.Address,
 		SymptomDescription: req.SymptomDescription,
-		SymptomPhotos:      "[]",
+		SymptomPhotos:      photosJSON,
 		Status:             "pending",
 	}
 	if err := s.repo.CreateRepairRequest(rr); err != nil {

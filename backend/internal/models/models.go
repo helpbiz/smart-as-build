@@ -141,11 +141,12 @@ type UpdateFCMTokenRequest struct {
 }
 
 type AdminCreateRepairRequestDTO struct {
-	ProductName        string `json:"product_name" binding:"required"`
-	CustomerName       string `json:"customer_name" binding:"required"`
-	Phone              string `json:"phone" binding:"required"`
-	Address            string `json:"address" binding:"required"`
-	SymptomDescription string `json:"symptom_description"`
+	ProductName        string   `json:"product_name" binding:"required"`
+	CustomerName       string   `json:"customer_name" binding:"required"`
+	Phone              string   `json:"phone" binding:"required"`
+	Address            string   `json:"address" binding:"required"`
+	SymptomDescription string   `json:"symptom_description"`
+	SymptomPhotos      []string `json:"symptom_photos"`
 }
 
 type AdminAssignRequestDTO struct {

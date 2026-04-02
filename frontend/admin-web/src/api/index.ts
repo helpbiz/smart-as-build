@@ -51,12 +51,23 @@ export const technicianApi = {
 
 export const requestApi = {
   list: () => api.get('/admin/repair-requests'),
-  create: (data: { product_name: string; customer_name: string; phone: string; address: string; symptom_description?: string }) =>
+  create: (data: { product_name: string; customer_name: string; phone: string; address: string; symptom_description?: string; symptom_photos?: string[] }) =>
     api.post('/admin/repair-requests', data),
   assign: (id: number, technician_id: number) =>
     api.put(`/admin/repair-requests/${id}/assign`, { technician_id }),
   updateStatus: (id: number, status: string) =>
     api.put(`/admin/repair-requests/${id}/status`, { status }),
+};
+
+export const uploadApi = {
+  uploadPhoto: (file: File) => {
+    const formData = new FormData();
+    formData.append('photo', file);
+    const token = localStorage.getItem('token');
+    return axios.post(`${API_BASE_URL}/admin/upload-photo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
+    });
+  },
 };
 
 export const statisticsApi = {
