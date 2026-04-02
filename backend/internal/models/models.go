@@ -11,7 +11,7 @@ type User struct {
 	ID           uint           `gorm:"primaryKey" json:"id"`
 	Phone        string         `gorm:"uniqueIndex;not null" json:"phone"`
 	Name         string         `gorm:"not null" json:"name"`
-	Email        string         `gorm:"uniqueIndex" json:"email,omitempty"`
+	Email        string         `json:"email,omitempty"`
 	PasswordHash string         `gorm:"not null" json:"-"`
 	FCMToken     string         `json:"fcm_token,omitempty"`
 	CreatedAt    time.Time      `json:"created_at"`
@@ -24,7 +24,7 @@ type Technician struct {
 	ID           uint           `gorm:"primaryKey" json:"id"`
 	Phone        string         `gorm:"uniqueIndex;not null" json:"phone"`
 	Name         string         `gorm:"not null" json:"name"`
-	Email        string         `gorm:"uniqueIndex" json:"email,omitempty"`
+	Email        string         `json:"email,omitempty"`
 	PasswordHash string         `gorm:"not null" json:"-"`
 	FCMToken     string         `json:"fcm_token,omitempty"`
 	Status       string         `gorm:"not null;default:pending" json:"status"` // pending, approved, suspended

@@ -50,6 +50,12 @@ func main() {
 	// purchase_date가 NOT NULL로 생성된 경우 nullable로 변경 (관리자 접수 등록 대응)
 	db.Exec("ALTER TABLE repair_requests ALTER COLUMN purchase_date DROP NOT NULL")
 
+	// email unique index를 partial index로 교체: 빈 이메일로 여러 기사/고객 등록 가능하게
+	db.Exec("DROP INDEX IF EXISTS idx_technicians_email")
+	db.Exec("DROP INDEX IF EXISTS idx_users_email")
+	db.Exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_technicians_email ON technicians(email) WHERE email != '' AND deleted_at IS NULL")
+	db.Exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE email != '' AND deleted_at IS NULL")
+
 	fcmClient, err := fcm.NewClient(&cfg.FCM)
 	if err != nil {
 		log.Printf("Warning: FCM initialization failed: %v", err)
