@@ -126,12 +126,13 @@ func (h *AdminHandler) ExportExcel(c *gin.Context) {
 	defer f.Close()
 
 	sheetName := "수리 요청 현황"
+	// Sheet1을 원하는 이름으로 변경 후 기본 Sheet1 삭제
 	f.SetSheetName("Sheet1", sheetName)
 
 	headers := []string{
 		"번호", "접수일", "고객명", "연락처", "주소",
 		"제품명", "증상", "상태", "담당기사", "수리완료일",
-		"수리내용", "사용부품", "결제금액", "결제방법",
+		"수리내용", "사용부품", "결제금액(원)", "결제방법",
 	}
 
 	for i, header := range headers {
@@ -139,12 +140,16 @@ func (h *AdminHandler) ExportExcel(c *gin.Context) {
 		f.SetCellValue(sheetName, cell, header)
 	}
 
-	style, _ := f.NewStyle(&excelize.Style{
+	headerStyle, _ := f.NewStyle(&excelize.Style{
 		Font:      &excelize.Font{Bold: true},
-		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#E0E0E0"}, Pattern: 1},
-		Alignment: &excelize.Alignment{Horizontal: "center"},
+		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#D9E1F2"}, Pattern: 1},
+		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center"},
+		Border: []excelize.Border{
+			{Type: "bottom", Color: "#4472C4", Style: 2},
+		},
 	})
-	f.SetRowStyle(sheetName, 1, 1, style)
+	f.SetRowStyle(sheetName, 1, 1, headerStyle)
+	f.SetRowHeight(sheetName, 1, 20)
 
 	requests, err := h.svc.GetRepairRequestsForExport()
 	if err != nil {
@@ -174,9 +179,27 @@ func (h *AdminHandler) ExportExcel(c *gin.Context) {
 			f.SetCellValue(sheetName, fmt.Sprintf("J%d", row), req.RepairCompletion.CompletedAt.Format("2006-01-02 15:04"))
 			f.SetCellValue(sheetName, fmt.Sprintf("K%d", row), req.RepairCompletion.RepairDetails)
 			f.SetCellValue(sheetName, fmt.Sprintf("L%d", row), req.RepairCompletion.PartsUsed)
-			f.SetCellValue(sheetName, fmt.Sprintf("M%d", row), formatAmount(req.RepairCompletion.PaymentAmount))
+			f.SetCellInt(sheetName, fmt.Sprintf("M%d", row), req.RepairCompletion.PaymentAmount)
 			f.SetCellValue(sheetName, fmt.Sprintf("N%d", row), getPaymentMethodText(req.RepairCompletion.PaymentMethod))
+		} else {
+			f.SetCellValue(sheetName, fmt.Sprintf("J%d", row), "-")
+			f.SetCellValue(sheetName, fmt.Sprintf("K%d", row), "-")
+			f.SetCellValue(sheetName, fmt.Sprintf("L%d", row), "-")
+			f.SetCellInt(sheetName, fmt.Sprintf("M%d", row), 0)
+			f.SetCellValue(sheetName, fmt.Sprintf("N%d", row), "-")
 		}
+	}
+
+	// 합계 행 추가
+	if len(requests) > 0 {
+		sumRow := len(requests) + 2
+		f.SetCellValue(sheetName, fmt.Sprintf("L%d", sumRow), "합계")
+		f.SetCellFormula(sheetName, fmt.Sprintf("M%d", sumRow), fmt.Sprintf("SUM(M2:M%d)", sumRow-1))
+		sumStyle, _ := f.NewStyle(&excelize.Style{
+			Font: &excelize.Font{Bold: true},
+			Fill: excelize.Fill{Type: "pattern", Color: []string{"#FFF2CC"}, Pattern: 1},
+		})
+		f.SetRowStyle(sheetName, sumRow, sumRow, sumStyle)
 	}
 
 	f.SetColWidth(sheetName, "A", "A", 6)
@@ -191,21 +214,21 @@ func (h *AdminHandler) ExportExcel(c *gin.Context) {
 	f.SetColWidth(sheetName, "J", "J", 18)
 	f.SetColWidth(sheetName, "K", "K", 30)
 	f.SetColWidth(sheetName, "L", "L", 20)
-	f.SetColWidth(sheetName, "M", "M", 12)
+	f.SetColWidth(sheetName, "M", "M", 14)
 	f.SetColWidth(sheetName, "N", "N", 10)
 
 	filename := fmt.Sprintf("smart_as_export_%s.xlsx", time.Now().Format("20060102_150405"))
-	filepath := filepath.Join("/tmp", filename)
+	filePath := filepath.Join("/tmp", filename)
 
-	if err := f.SaveAs(filepath); err != nil {
+	if err := f.SaveAs(filePath); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
 		return
 	}
 
 	c.Header("Content-Description", "File Transfer")
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
-	c.Header("Content-Type", "application/octet-stream")
-	c.File(filepath)
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.File(filePath)
 }
 
 func getStatusText(status string) string {
@@ -223,12 +246,6 @@ func getStatusText(status string) string {
 	}
 }
 
-func formatAmount(n int) string {
-	if n < 1000 {
-		return fmt.Sprintf("%d", n)
-	}
-	return formatAmount(n/1000) + "," + fmt.Sprintf("%03d", n%1000)
-}
 
 func (h *AdminHandler) AdminCreateRepairRequest(c *gin.Context) {
 	var req models.AdminCreateRepairRequestDTO
