@@ -381,6 +381,7 @@ func (s *Service) AdminCreateRepairRequest(req *models.AdminCreateRepairRequestD
 		Phone:              req.Phone,
 		Address:            req.Address,
 		SymptomDescription: req.SymptomDescription,
+		SymptomPhotos:      "[]",
 		Status:             "pending",
 	}
 	if err := s.repo.CreateRepairRequest(rr); err != nil {

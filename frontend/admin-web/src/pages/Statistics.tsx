@@ -27,11 +27,11 @@ export default function Statistics() {
     return <div className="text-red-500">오류: {error}</div>;
   }
 
-  const statistics = (stats || {
-    total_revenue: 0,
-    monthly_revenue: [],
-    technician_stats: [],
-  }) as Statistics;
+  const statistics = {
+    total_revenue: stats?.total_revenue ?? 0,
+    monthly_revenue: stats?.monthly_revenue ?? [],
+    technician_stats: stats?.technician_stats ?? [],
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ko-KR', {
