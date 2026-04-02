@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi } from '../api';
 
@@ -94,7 +94,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Smart A/S</Text>
+      <Image source={require('../../assets/logo.jpg')} style={styles.logo} resizeMode="contain" />
       <Text style={styles.subtitle}>고객용</Text>
 
       <View style={styles.tabs}>
@@ -220,11 +220,10 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#007AFF',
+  logo: {
+    width: 200,
+    height: 80,
+    alignSelf: 'center',
     marginBottom: 8,
   },
   subtitle: {

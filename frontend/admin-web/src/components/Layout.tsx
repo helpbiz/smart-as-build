@@ -25,8 +25,10 @@ export default function Layout({ children, onLogout }: { children: React.ReactNo
     <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-gray-800 text-white">
         <div className="p-4">
-          <h1 className="text-xl font-bold">Smart A/S</h1>
-          <p className="text-sm text-gray-400">Admin Portal</p>
+          <div className="bg-white rounded-lg p-2 inline-block">
+            <img src="/color-logo.jpg" alt="Go Zzang" className="h-10 w-auto" />
+          </div>
+          <p className="text-sm text-gray-400 mt-1">Admin Portal</p>
         </div>
         <nav className="mt-4">
           {navItems.map((item) => (

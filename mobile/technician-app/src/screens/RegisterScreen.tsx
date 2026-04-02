@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView, Image } from 'react-native';
 import { authApi } from '../api';
 
 export default function RegisterScreen({ onRegistered }: { onRegistered: () => void }) {
@@ -68,7 +68,7 @@ export default function RegisterScreen({ onRegistered }: { onRegistered: () => v
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Smart A/S</Text>
+      <Image source={require('../../assets/logo.jpg')} style={styles.logo} resizeMode="contain" />
       <Text style={styles.subtitle}>기사용 회원가입</Text>
 
       <View style={styles.form}>
@@ -176,11 +176,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#007AFF',
+  logo: {
+    width: 200,
+    height: 80,
+    alignSelf: 'center',
     marginBottom: 8,
   },
   subtitle: {

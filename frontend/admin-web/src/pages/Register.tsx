@@ -40,7 +40,9 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold text-center mb-6">Smart A/S Admin</h1>
+        <div className="flex justify-center mb-6">
+          <img src="/color-logo.jpg" alt="Go Zzang" className="h-16 w-auto" style={{ mixBlendMode: 'multiply' }} />
+        </div>
         <h2 className="text-xl font-semibold text-center mb-4">회원가입</h2>
         
         {error && (

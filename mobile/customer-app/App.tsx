@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './src/screens/LoginScreen';
 import CreateRequestScreen from './src/screens/CreateRequestScreen';
@@ -54,7 +54,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Smart A/S</Text>
+        <Image source={require('./assets/logo.jpg')} style={styles.headerLogo} resizeMode="contain" />
         <TouchableOpacity onPress={handleLogout}>
           <Text style={styles.logoutBtn}>로그아웃</Text>
         </TouchableOpacity>
@@ -89,8 +89,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#007AFF' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', backgroundColor: '#fff' },
+  headerLogo: { height: 36, width: 120 },
   logoutBtn: { color: '#FF3B30', fontSize: 14 },
   tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#eee' },
   tab: { flex: 1, paddingVertical: 14, alignItems: 'center' },
