@@ -12,24 +12,32 @@ services:
       - ./data/certs:/etc/nginx/certs:ro
     depends_on:
       - backend
+    networks:
+      - smart-as-net
     restart: unless-stopped
 
   backend:
     image: smart-as-backend:latest
     container_name: smartas-backend
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      - DB_HOST=host.docker.internal
+      - DB_HOST=as-system-db
       - DB_PORT=5432
       - DB_USER=smartas
       - DB_PASSWORD=smartas1234
       - DB_NAME=smart_as
       - JWT_SECRET=smartas-jwt-secret-key-32chars-minimum
       - SERVER_PORT=8088
+    networks:
+      - smart-as-net
     restart: unless-stopped
 
   frontend:
     image: smart-as_app:latest
     container_name: smartas-frontend
+    networks:
+      - smart-as-net
     restart: unless-stopped
+
+networks:
+  smart-as-net:
+    external: true
