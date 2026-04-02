@@ -381,6 +381,7 @@ func (s *Service) AdminCreateRepairRequest(req *models.AdminCreateRepairRequestD
 			photosJSON = string(data)
 		}
 	}
+	now := time.Now()
 	rr := &models.RepairRequest{
 		ProductName:        req.ProductName,
 		CustomerName:       req.CustomerName,
@@ -389,6 +390,7 @@ func (s *Service) AdminCreateRepairRequest(req *models.AdminCreateRepairRequestD
 		SymptomDescription: req.SymptomDescription,
 		SymptomPhotos:      photosJSON,
 		Status:             "pending",
+		PurchaseDate:       &now,
 	}
 	if err := s.repo.CreateRepairRequest(rr); err != nil {
 		return nil, err
