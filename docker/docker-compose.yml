@@ -5,11 +5,13 @@ services:
     image: nginx:alpine
     container_name: smartas-nginx
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./data/certs:/etc/nginx/certs:ro
+      - ./data/certbot:/var/www/certbot:ro
     depends_on:
       - backend
     networks:
@@ -17,7 +19,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: smart-as-backend:latest
+    image: smartas-backend:latest
     container_name: smartas-backend
     environment:
       - DB_HOST=as-system-db
@@ -32,7 +34,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: smart-as_app:latest
+    image: smartas-frontend:latest
     container_name: smartas-frontend
     networks:
       - smart-as-net
