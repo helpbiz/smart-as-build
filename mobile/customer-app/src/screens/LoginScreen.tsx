@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, ScrollView, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi } from '../api';
 
@@ -10,6 +10,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const validatePhone = (phoneNumber: string): boolean => {
@@ -100,6 +101,53 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
+    <>
+    <Modal visible={showTerms} animationType="slide" onRequestClose={() => setShowTerms(false)}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>이용약관 및 개인정보처리방침</Text>
+          <TouchableOpacity onPress={() => setShowTerms(false)}>
+            <Text style={styles.modalClose}>✕ 닫기</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView style={styles.modalBody}>
+          <Text style={styles.termsSectionTitle}>■ 서비스 이용약관</Text>
+          <Text style={styles.termsText}>{`제1조 (목적)
+본 약관은 고짱(이하 "서비스")이 제공하는 소형가전 A/S 매칭 서비스 이용에 관한 조건 및 절차를 규정합니다.
+
+제2조 (서비스 이용)
+① 회원은 본 서비스를 통해 가전제품 수리 접수 및 진행 상황을 확인할 수 있습니다.
+② 허위 정보 등록, 서비스 악용 시 이용이 제한될 수 있습니다.
+
+제3조 (책임 제한)
+서비스는 수리 기사와 고객을 연결하는 플랫폼이며, 실제 수리 결과에 대한 직접적인 책임을 지지 않습니다.`}
+          </Text>
+
+          <Text style={styles.termsSectionTitle}>■ 개인정보처리방침</Text>
+          <Text style={styles.termsText}>{`1. 수집 항목
+- 이름, 연락처(휴대폰번호), 서비스 주소, 기기 정보
+
+2. 수집 목적
+- A/S 접수 및 처리, 수리 기사 배정, 서비스 안내
+
+3. 보유 기간
+- 회원 탈퇴 시까지 또는 법령에 따른 보유 기간
+
+4. 제3자 제공
+- 수리 서비스 제공을 위해 담당 기사에게 이름, 연락처, 주소를 제공합니다.
+
+5. 개인정보 처리 문의
+- 서비스 내 고객센터를 통해 문의하실 수 있습니다.`}
+          </Text>
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.agreeButton}
+          onPress={() => { setAgreeTerms(true); setShowTerms(false); }}
+        >
+          <Text style={styles.agreeButtonText}>동의하고 닫기</Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
     <ScrollView
       contentContainerStyle={styles.scrollContainer}
       keyboardShouldPersistTaps="handled"
@@ -180,18 +228,23 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         )}
 
         {isRegisterMode && (
-          <TouchableOpacity
-            style={styles.checkboxRow}
-            onPress={() => setAgreeTerms(!agreeTerms)}
-            disabled={loading}
-          >
-            <View style={[styles.checkbox, agreeTerms && styles.checkboxChecked]}>
-              {agreeTerms && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.checkboxLabel}>
-              서비스 이용약관 및 개인정보처리방침에 동의합니다 <Text style={styles.required}>(필수)</Text>
-            </Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              style={styles.checkboxRow}
+              onPress={() => setAgreeTerms(!agreeTerms)}
+              disabled={loading}
+            >
+              <View style={[styles.checkbox, agreeTerms && styles.checkboxChecked]}>
+                {agreeTerms && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={styles.checkboxLabel}>
+                서비스 이용약관 및 개인정보처리방침에 동의합니다 <Text style={styles.required}>(필수)</Text>
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowTerms(true)}>
+              <Text style={styles.termsLink}>▶ 이용약관 및 개인정보처리방침 보기</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         <TouchableOpacity
@@ -219,6 +272,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         )}
       </View>
     </ScrollView>
+    </>
   );
 }
 
@@ -340,5 +394,62 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 20,
+  },
+  termsLink: {
+    color: '#007AFF',
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 32,
+    textDecorationLine: 'underline',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    paddingTop: 50,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+  },
+  modalClose: {
+    color: '#007AFF',
+    fontSize: 14,
+  },
+  modalBody: {
+    flex: 1,
+    padding: 16,
+  },
+  termsSectionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#222',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  termsText: {
+    fontSize: 13,
+    color: '#444',
+    lineHeight: 22,
+  },
+  agreeButton: {
+    backgroundColor: '#007AFF',
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  agreeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
