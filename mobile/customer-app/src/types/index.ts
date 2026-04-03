@@ -5,7 +5,7 @@ const getApiBaseUrl = () => {
   if (extra?.apiUrl) {
     return extra.apiUrl;
   }
-  return 'https://api.foryouelec.co.kr/api/v1';
+  return 'https://foryouelec.co.kr/api/v1';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

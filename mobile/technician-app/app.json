@@ -2,14 +2,14 @@
   "expo": {
     "name": "고짱 기사용",
     "slug": "smart-as-technician",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "extra": {
       "eas": {
         "projectId": "631aa1fb-9d8d-4c95-ad1e-c49cfc60c227"
       },
-      "apiUrl": "http://foryouelec.co.kr/api/v1"
+      "apiUrl": "https://foryouelec.co.kr/api/v1"
     },
     "splash": {
       "resizeMode": "contain",

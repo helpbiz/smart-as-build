@@ -2,14 +2,14 @@
   "expo": {
     "name": "고짱 고객용",
     "slug": "smart-as-customer",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "extra": {
       "eas": {
         "projectId": "2925f522-54d1-4b17-9d7e-d31415285337"
       },
-      "apiUrl": "http://foryouelec.co.kr/api/v1"
+      "apiUrl": "https://foryouelec.co.kr/api/v1"
     },
     "splash": {
       "resizeMode": "contain",
