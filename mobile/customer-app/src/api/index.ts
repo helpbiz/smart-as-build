@@ -1,16 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
 
-const getApiBaseUrl = () => {
-  const extra = Constants.expoConfig?.extra;
-  if (extra?.apiUrl) {
-    return extra.apiUrl;
-  }
-  return 'https://api.foryouelec.co.kr/api/v1';
-};
-
-export const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = 'http://foryouelec.co.kr/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
