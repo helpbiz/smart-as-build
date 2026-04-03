@@ -22,7 +22,8 @@
     },
     "android": {
       "package": "com.smartas.customer",
-      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION"]
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "ACCESS_FINE_LOCATION"],
+      "usesCleartextTraffic": true
     },
     "plugins": [
       [
