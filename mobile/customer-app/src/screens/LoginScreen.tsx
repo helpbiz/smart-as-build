@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, Image, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi } from '../api';
 
@@ -9,6 +9,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const validatePhone = (phoneNumber: string): boolean => {
@@ -36,7 +37,7 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
       onLogin();
     } catch (error: any) {
       if (error.code === 'ECONNABORTED' || !error.response) {
-        Alert.alert('연결 오류', '서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.');
+        Alert.alert('연결 오류', `서버에 연결할 수 없습니다.\n[${error.code || 'NO_RESPONSE'}] ${error.message}`);
       } else {
         Alert.alert('로그인 실패', error.response?.data?.error || '연락처 또는 비밀번호를 확인해주세요.');
       }
@@ -67,6 +68,11 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
       return;
     }
 
+    if (!agreeTerms) {
+      Alert.alert('약관 동의', '서비스 이용약관 및 개인정보처리방침에 동의해주세요.');
+      return;
+    }
+
     setLoading(true);
     try {
       await authApi.register(cleanPhone, name, '', password);
@@ -77,13 +83,14 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
             setIsRegisterMode(false);
             setPassword('');
             setConfirmPassword('');
+            setAgreeTerms(false);
             setPhone(cleanPhone);
           },
         },
       ]);
     } catch (error: any) {
       if (error.code === 'ECONNABORTED' || !error.response) {
-        Alert.alert('연결 오류', '서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.');
+        Alert.alert('연결 오류', `서버에 연결할 수 없습니다.\n[${error.code || 'NO_RESPONSE'}] ${error.message}`);
       } else {
         Alert.alert('회원가입 실패', error.response?.data?.error || '다시 시도해주세요.');
       }
@@ -93,7 +100,10 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
       <Image source={require('../../assets/logo.jpg')} style={styles.logo} resizeMode="contain" />
       <Text style={styles.subtitle}>고객용</Text>
 
@@ -103,15 +113,14 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
           onPress={() => {
             setIsRegisterMode(false);
             setConfirmPassword('');
+            setAgreeTerms(false);
           }}
         >
           <Text style={[styles.tabText, !isRegisterMode && styles.activeTabText]}>로그인</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, isRegisterMode && styles.activeTab]}
-          onPress={() => {
-            setIsRegisterMode(true);
-          }}
+          onPress={() => setIsRegisterMode(true)}
         >
           <Text style={[styles.tabText, isRegisterMode && styles.activeTabText]}>회원가입</Text>
         </TouchableOpacity>
@@ -170,15 +179,24 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
           </View>
         )}
 
+        {isRegisterMode && (
+          <TouchableOpacity
+            style={styles.checkboxRow}
+            onPress={() => setAgreeTerms(!agreeTerms)}
+            disabled={loading}
+          >
+            <View style={[styles.checkbox, agreeTerms && styles.checkboxChecked]}>
+              {agreeTerms && <Text style={styles.checkmark}>✓</Text>}
+            </View>
+            <Text style={styles.checkboxLabel}>
+              서비스 이용약관 및 개인정보처리방침에 동의합니다 <Text style={styles.required}>(필수)</Text>
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={() => {
-            if (isRegisterMode) {
-              handleRegister();
-            } else {
-              handleLogin();
-            }
-          }}
+          onPress={() => isRegisterMode ? handleRegister() : handleLogin()}
           disabled={loading}
         >
           {loading ? (
@@ -191,31 +209,22 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         </TouchableOpacity>
 
         {!isRegisterMode ? (
-          <TouchableOpacity
-            onPress={() => setIsRegisterMode(true)}
-            disabled={loading}
-          >
+          <TouchableOpacity onPress={() => setIsRegisterMode(true)} disabled={loading}>
             <Text style={styles.linkText}>회원가입 하러가기 →</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            onPress={() => {
-              setIsRegisterMode(false);
-              setConfirmPassword('');
-            }}
-            disabled={loading}
-          >
+          <TouchableOpacity onPress={() => { setIsRegisterMode(false); setConfirmPassword(''); setAgreeTerms(false); }} disabled={loading}>
             <Text style={styles.linkText}>로그인 하러가기 →</Text>
           </TouchableOpacity>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
     backgroundColor: '#fff',
@@ -275,6 +284,41 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 16,
     backgroundColor: '#fff',
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 4,
+    paddingHorizontal: 4,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    borderRadius: 4,
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: '#007AFF',
+  },
+  checkmark: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  checkboxLabel: {
+    flex: 1,
+    fontSize: 13,
+    color: '#444',
+    lineHeight: 18,
+  },
+  required: {
+    color: '#FF3B30',
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#007AFF',
