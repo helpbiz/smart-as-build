@@ -7,7 +7,7 @@
     "userInterfaceStyle": "light",
     "extra": {
       "eas": {
-        "projectId": "smart-as-technician"
+        "projectId": "631aa1fb-9d8d-4c95-ad1e-c49cfc60c227"
       },
       "apiUrl": "http://foryouelec.co.kr/api/v1"
     },
@@ -29,8 +29,7 @@
         "ACCESS_FINE_LOCATION"
       ]
     },
-    "plugins": [
-      "expo-asset"
-    ]
+    "plugins": [],
+    "owner": "nicewon"
   }
 }
